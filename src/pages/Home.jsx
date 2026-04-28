@@ -7,8 +7,8 @@ function Home() {
           <span>Health & Wellness</span>
         </h1>
 
-        <p>
-          Track mental health, get support, and improve your well-being with personalized AI insights.
+        <p><strong>
+          Track mental health, get support, and improve your well-being with personalized AI insights.</strong>
         </p>
 
         <div className="hero-buttons">

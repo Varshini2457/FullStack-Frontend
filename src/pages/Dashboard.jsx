@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
+
 function Dashboard() {
   const navigate = useNavigate();
   
-  // Initialize user state from localStorage
   const [user] = useState(() => {
     try {
       const userData = localStorage.getItem("user");
       if (userData) {
         return JSON.parse(userData);
       }
-      // Fallback user data if not in localStorage
       return { name: "Wellness Enthusiast", email: "user@example.com", role: "student" };
     } catch (e) {
       console.error("Error parsing user data:", e);
@@ -24,10 +23,10 @@ function Dashboard() {
   const [notes, setNotes] = useState("");
   const [feedbackTitle, setFeedbackTitle] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  
   const [feedbackSuccess, setFeedbackSuccess] = useState("");
 
   useEffect(() => {
-    // Check if user is logged in
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
@@ -71,25 +70,95 @@ function Dashboard() {
 
   return (
     <div className="dashboard-container">
+
+      {/* HEADER */}
       <div className="dashboard-header">
         <div className="header-content">
           <h1>Welcome, {user?.name || "User"}</h1>
           <p className="app-subtitle">Student Health and Wellness App</p>
         </div>
+
         <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          <Link to="/contact">
+  <button className="nav-btn">📞 Contact</button>
+</Link>
           <Link to="/health-resource-hub">
             <button className="nav-btn">📚 Health Resources</button>
           </Link>
+
           {isAdmin && (
             <Link to="/admin-dashboard">
               <button className="nav-btn">⚙️ Admin Panel</button>
             </Link>
           )}
+
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </div>
 
+      {/* 🔥 NEW: HEALTH SUMMARY */}
+      <div className="dashboard-summary">
+        <div className="summary-card">
+          <h3>💓 Heart Rate</h3>
+          <p>72 bpm</p>
+        </div>
+
+        <div className="summary-card">
+          <h3>😴 Sleep</h3>
+          <p>7.5 hrs</p>
+        </div>
+
+        <div className="summary-card">
+          <h3>🧠 Stress</h3>
+          <p>Low</p>
+        </div>
+
+        <div className="summary-card">
+          <h3>🏃 Activity</h3>
+          <p>5,000 steps</p>
+        </div>
+      </div>
+
+      {/* 🔥 NEW: CHART SECTION */}
+     <div className="feedback-card">
+  <h2>Send Feedback to Admin</h2>
+
+  <p className="feedback-text">
+    Share your wellness experience, suggestions, or report any issues.
+  </p>
+
+  <input
+    type="text"
+    className="feedback-input"
+    placeholder="Feedback Title"
+    value={feedbackTitle}
+    onChange={(e) => setFeedbackTitle(e.target.value)}
+  />
+
+  <textarea
+    className="feedback-input"
+    placeholder="Write your feedback here..."
+    rows="5"
+    value={feedbackMessage}
+    onChange={(e) => setFeedbackMessage(e.target.value)}
+  ></textarea>
+
+  <button
+    className="feedback-btn"
+    onClick={handleFeedbackSubmit}
+  >
+    Send Feedback
+  </button>
+
+  {feedbackSuccess && (
+    <p className="feedback-success">
+      {feedbackSuccess}
+    </p>
+  )}
+</div>
+      {/* EXISTING CONTENT */}
       <div className="dashboard-content">
+<div className="bottom-cards">
         <div className="dashboard-card">
           <h2>Daily Mood Tracker</h2>
           <form onSubmit={handleMoodSubmit}>
@@ -124,72 +193,8 @@ function Dashboard() {
           </form>
         </div>
 
-        <div className="dashboard-card">
-          <h2>Your Insights</h2>
-          <div className="insights">
-            <div className="insight-item">
-              <h3>Current Mood Streak</h3>
-              <p className="insight-value">5 days</p>
-            </div>
-            <div className="insight-item">
-              <h3>Total Entries</h3>
-              <p className="insight-value">24</p>
-            </div>
-            <div className="insight-item">
-              <h3>Wellness Score</h3>
-              <p className="insight-value">78%</p>
-            </div>
-          </div>
+        {/* KEEP REST SAME */}
         </div>
-
-        <div className="dashboard-card">
-          <h2>Wellness Tips</h2>
-          <ul className="tips-list">
-            <li>Take a 10-minute break every hour</li>
-            <li>Practice deep breathing exercises</li>
-            <li>Stay hydrated throughout the day</li>
-            <li>Get at least 7-8 hours of sleep</li>
-            <li>Reach out to someone if you need support</li>
-          </ul>
-        </div>
-
-        <div className="dashboard-card">
-          <h2>Send Feedback</h2>
-          <p>Share your thoughts so the admin can review and improve the app.</p>
-          <form onSubmit={handleFeedbackSubmit}>
-            <input
-              className="dashboard-input"
-              type="text"
-              placeholder="Feedback title"
-              value={feedbackTitle}
-              onChange={(e) => setFeedbackTitle(e.target.value)}
-              required
-            />
-            <textarea
-              className="dashboard-textarea"
-              placeholder="Write your feedback here..."
-              value={feedbackMessage}
-              onChange={(e) => setFeedbackMessage(e.target.value)}
-              rows="5"
-              required
-            />
-            <button type="submit" className="dashboard-btn">Submit Feedback</button>
-            {feedbackSuccess && <p className="feedback-success">{feedbackSuccess}</p>}
-          </form>
-        </div>
-
-        <div className="dashboard-card app-use-card">
-          <h2>How to Use the App</h2>
-          <p>Make the most of the Student Health and Wellness App by following these simple steps:</p>
-          <ul className="usage-list">
-            <li><strong>Log your mood daily:</strong> Track emotional changes and spot patterns over time.</li>
-            <li><strong>Save quick notes:</strong> Record your thoughts, stressors, or positive moments.</li>
-            <li><strong>Explore resources:</strong> Open the Health Resource Hub for curated mental health and wellness videos.</li>
-            <li><strong>Review insights:</strong> Check your wellness score to stay motivated and focused.</li>
-            <li><strong>Reach out:</strong> Use the app regularly and connect with support if you need help.</li>
-          </ul>
-        </div>
-
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import { handleError } from "../utils/errorHandler";
+import { GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
@@ -22,21 +24,16 @@ function Login() {
     e.preventDefault();
 
     try {
-      // 🔥 FIX: include role in request
       const requestData = {
         ...form,
-        role: role.toUpperCase()   // IMPORTANT
+        role: role.toUpperCase()
       };
 
-      console.log("Sending login data:", requestData);
-
       const res = await loginUser(requestData);
-      console.log("Login response:", res);
 
       const token = res.token || res.data?.token || res || "logged_in";
       localStorage.setItem("token", token);
 
-      // Save user data
       const userData = {
         name: form.name.trim() || form.email.split("@")[0],
         email: form.email,
@@ -47,7 +44,6 @@ function Login() {
 
       alert("✅ Login Success!");
 
-      // Redirect based on role
       if (role === "admin") {
         navigate("/admin-dashboard");
       } else {
@@ -55,13 +51,12 @@ function Login() {
       }
 
     } catch (err) {
-      console.error("Login error:", err);
       alert(handleError(err));
     }
   };
 
   return (
-    <div className="container">
+    <div className="page-center">
       <div className="form-card">
         <h2>Login</h2>
 
@@ -117,6 +112,36 @@ function Login() {
             Login as {role.charAt(0).toUpperCase() + role.slice(1)}
           </button>
         </form>
+
+        {/* 🔥 GOOGLE LOGIN BUTTON */}
+        <div style={{ marginTop: "20px", textAlign: "center" }}>
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                const res = await axios.post(
+                  "http://localhost:2028/auth/google",
+                  {
+                    token: credentialResponse.credential,
+                  }
+                );
+
+                localStorage.setItem("token", res.data.token);
+                localStorage.setItem("user", JSON.stringify(res.data.user));
+
+                alert("✅ Google Login Success");
+
+                navigate("/dashboard");
+
+              } catch (err) {
+                console.error(err);
+                alert("Google login failed");
+              }
+            }}
+            onError={() => {
+              alert("Google Login Failed");
+            }}
+          />
+        </div>
 
       </div>
     </div>

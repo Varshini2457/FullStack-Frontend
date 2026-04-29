@@ -35,7 +35,7 @@ function Register() {
 
     try {
 
-      await axios.post("http://localhost:2028/send-otp", {
+      await axios.post("https://student-health-backend-qtvu.onrender.com/send-otp", {
         email: form.email
       });
 
@@ -54,7 +54,7 @@ function Register() {
 
     try {
 
-      await axios.post("http://localhost:2028/verify-otp", {
+      await axios.post("https://student-health-backend-qtvu.onrender.com/verify-otp", {
         email: form.email,
         otp: otp
       });

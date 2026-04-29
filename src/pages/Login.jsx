@@ -114,12 +114,13 @@ function Login() {
         </form>
 
         {/* 🔥 GOOGLE LOGIN BUTTON */}
-        <div style={{ marginTop: "20px", textAlign: "center" }}>
+        {/*<div style={{ marginTop: "20px", textAlign: "center" }}>*/}
+        <div className="google-login-container">
           <GoogleLogin
             onSuccess={async (credentialResponse) => {
               try {
                 const res = await axios.post(
-                  "http://localhost:2028/auth/google",
+                  "https://student-health-backend-qtvu.onrender.com/auth/google",
                   {
                     token: credentialResponse.credential,
                   }
